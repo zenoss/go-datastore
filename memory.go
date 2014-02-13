@@ -35,6 +35,15 @@ func (context MemoryStorageContext) Put(storable Storeable) error {
 	return nil
 }
 
+func (context MemoryStorageContext) Exists(storable Storeable) (bool, error) {
+	type_, ok := context.values[storable.Type()]
+	if !ok {
+		return ok, nil
+	}
+	_, ok = type_[storable.Key()]
+	return ok, nil
+}
+
 func (context MemoryStorageContext) Get(storable Storeable) error {
 	type_, ok := context.values[storable.Type()]
 	if !ok {
@@ -57,4 +66,3 @@ func (context MemoryStorageContext) Delete(storable Storeable) error {
 	}
 	return nil
 }
-

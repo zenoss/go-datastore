@@ -14,6 +14,7 @@ type StorageContext interface {
 	Get(Storeable) error
 	Put(Storeable) error
 	Delete(Storeable) error
+	Exists(Storeable) (bool, error)
 }
 
 type DataStore struct {
@@ -45,6 +46,11 @@ func Put(context StorageContext, s Storeable) error {
 // and Key() methods return the appropiate type and primary key, respectively
 func Delete(context StorageContext, s Storeable) error {
 	return context.Delete(s)
+}
+
+// Exists() determines if a storable exists in the storagecontext
+func Exists(context StorageContext, s Storeable) (bool, error) {
+	return context.Exists(s)
 }
 
 // exists && search

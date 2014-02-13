@@ -62,6 +62,10 @@ func TestStores(t *testing.T) {
 		Attribute: "foo",
 	}
 
+	if exists, _ := Exists(storageContext, ob1); exists {
+		t.Fatalf("Did not expect to find %v", ob1)
+	}
+
 	if err := Put(storageContext, ob1); err != nil {
 		t.Fatalf("Could not store object %s: %s", ob1, err)
 	}
@@ -78,6 +82,10 @@ func TestStores(t *testing.T) {
 	notfindable := mockObject{Name: "does not exist"}
 	if err := Get(storageContext, notfindable); err == nil {
 		t.Fatalf("Should not have not found %s", notfindable)
+	}
+
+	if exists, _ := Exists(storageContext, notfindable); exists {
+		t.Fatalf("Did not expect to find %v", ob1)
 	}
 
 	if err := Get(storageContext, mockObject2{Name: "does not exist"}); err == nil {
