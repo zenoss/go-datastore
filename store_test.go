@@ -3,6 +3,7 @@ package datastore
 import (
 	"errors"
 	"testing"
+	"reflect"
 )
 
 type mockObject struct {
@@ -38,8 +39,12 @@ func TestStores(t *testing.T) {
 	}
 
 	ob2 := mockObject{Name: "test"}
-	if err := Get(storageContext, ob2); err != nil {
+	if err := Get(storageContext, &ob2); err != nil {
 		t.Fatalf("Could not get object %s: %s", ob1, err)
+	}
+
+	if !reflect.DeepEqual(ob1, ob2) {
+		t.Fatalf("ob1 '%v' != ob2 '%v'", ob1, ob2)
 	}
 
 	notfindable := mockObject{Name: "does not exist"}
