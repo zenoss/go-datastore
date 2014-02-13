@@ -2,8 +2,8 @@ package datastore
 
 import (
 	"errors"
-	"testing"
 	"reflect"
+	"testing"
 )
 
 type mockObject struct {
@@ -19,11 +19,35 @@ func (m mockObject) Type() string {
 	return "MockObject"
 }
 
+type mockObject2 struct {
+	Name      string
+	Attribute string
+}
+
+func (m mockObject2) Key() string {
+	return m.Name
+}
+
+func (m mockObject2) Type() string {
+	return "MockObject2"
+}
+
 func (m mockObject) Validate(context StorageContext) error {
 	if len(m.Name) == 0 {
 		return errors.New("mockObject must have a name")
 	}
-	nomore := mockObject{Name:"nomore"}
+	nomore := mockObject{Name: "nomore"}
+	if err := Get(context, &nomore); err != ErrNotFound {
+		return errors.New("nomore objects allowed because nomore object found")
+	}
+	return nil
+}
+
+func (m mockObject2) Validate(context StorageContext) error {
+	if len(m.Name) == 0 {
+		return errors.New("mockObject2 must have a name")
+	}
+	nomore := mockObject2{Name: "nomore"}
 	if err := Get(context, &nomore); err != ErrNotFound {
 		return errors.New("nomore objects allowed because nomore object found")
 	}
@@ -53,7 +77,15 @@ func TestStores(t *testing.T) {
 
 	notfindable := mockObject{Name: "does not exist"}
 	if err := Get(storageContext, notfindable); err == nil {
-		t.Fatalf("Should have not found %s", notfindable)
+		t.Fatalf("Should not have not found %s", notfindable)
+	}
+
+	if err := Get(storageContext, mockObject2{Name: "does not exist"}); err == nil {
+		t.Fatalf("Should not have not found %s", notfindable)
+	}
+
+	if err := Delete(storageContext, mockObject2{Name: "does not exist"}); err != nil {
+		t.Fatalf("Unexexpected error when deleting non-existent object %s: %s", notfindable, err)
 	}
 
 	nomore := mockObject{Name: "nomore"}
@@ -65,4 +97,7 @@ func TestStores(t *testing.T) {
 		t.Fatalf("expected error after nomore object")
 	}
 
+	if err := Delete(storageContext, ob1); err != nil {
+		t.Fatalf("Unexexpected error when deleting object %s: %s", ob1, err)
+	}
 }
