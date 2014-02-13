@@ -35,6 +35,9 @@ func Get(context StorageContext, s Storeable) error {
 // Put()s a value from the datastore; s is a pointer to a storable object who's Type()
 // and Key() methods return the appropiate type and primary key, respectively
 func Put(context StorageContext, s Storeable) error {
+	if err := s.Validate(context); err != nil {
+		return err
+	}
 	return context.Put(s)
 }
 

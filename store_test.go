@@ -23,6 +23,10 @@ func (m mockObject) Validate(context StorageContext) error {
 	if len(m.Name) == 0 {
 		return errors.New("mockObject must have a name")
 	}
+	nomore := mockObject{Name:"nomore"}
+	if err := Get(context, &nomore); err != ErrNotFound {
+		return errors.New("nomore objects allowed because nomore object found")
+	}
 	return nil
 }
 
@@ -50,6 +54,15 @@ func TestStores(t *testing.T) {
 	notfindable := mockObject{Name: "does not exist"}
 	if err := Get(storageContext, notfindable); err == nil {
 		t.Fatalf("Should have not found %s", notfindable)
+	}
+
+	nomore := mockObject{Name: "nomore"}
+	if err := Put(storageContext, nomore); err != nil {
+		t.Fatalf("Could not add 'nomore' object", err)
+	}
+
+	if err := Put(storageContext, ob1); err == nil {
+		t.Fatalf("expected error after nomore object")
 	}
 
 }
