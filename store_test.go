@@ -32,7 +32,7 @@ func (m mockObject2) Type() string {
 	return "MockObject2"
 }
 
-func (m mockObject) Validate(context StorageContext) error {
+func (m mockObject) Validate(context Context) error {
 	if len(m.Name) == 0 {
 		return errors.New("mockObject must have a name")
 	}
@@ -43,7 +43,7 @@ func (m mockObject) Validate(context StorageContext) error {
 	return nil
 }
 
-func (m mockObject2) Validate(context StorageContext) error {
+func (m mockObject2) Validate(context Context) error {
 	if len(m.Name) == 0 {
 		return errors.New("mockObject2 must have a name")
 	}
@@ -55,7 +55,7 @@ func (m mockObject2) Validate(context StorageContext) error {
 }
 
 func TestStores(t *testing.T) {
-	storageContext, _ := NewMemoryStorageContext()
+	storageContext, _ := NewMemoryContext()
 
 	ob1 := mockObject{
 		Name:      "test",

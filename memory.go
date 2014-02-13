@@ -6,21 +6,21 @@ import (
 
 type datatype []byte
 
-type MemoryStorageContext struct {
+type MemoryContext struct {
 	values map[string]map[string]datatype
 }
 
-// Assert that MemoryStorageContext implements StorageContext interface
-var _ StorageContext = MemoryStorageContext{}
+// Assert that MemoryContext implements Context interface
+var _ Context = MemoryContext{}
 
-func NewMemoryStorageContext() (context *MemoryStorageContext, err error) {
-	context = &MemoryStorageContext{
+func NewMemoryContext() (context *MemoryContext, err error) {
+	context = &MemoryContext{
 		values: make(map[string]map[string]datatype),
 	}
 	return context, nil
 }
 
-func (context MemoryStorageContext) Put(storable Storeable) error {
+func (context MemoryContext) Put(storable Storeable) error {
 
 	data, err := json.Marshal(storable)
 	if err != nil {
@@ -35,7 +35,7 @@ func (context MemoryStorageContext) Put(storable Storeable) error {
 	return nil
 }
 
-func (context MemoryStorageContext) Exists(storable Storeable) (bool, error) {
+func (context MemoryContext) Exists(storable Storeable) (bool, error) {
 	type_, ok := context.values[storable.Type()]
 	if !ok {
 		return ok, nil
@@ -44,7 +44,7 @@ func (context MemoryStorageContext) Exists(storable Storeable) (bool, error) {
 	return ok, nil
 }
 
-func (context MemoryStorageContext) Get(storable Storeable) error {
+func (context MemoryContext) Get(storable Storeable) error {
 	type_, ok := context.values[storable.Type()]
 	if !ok {
 		return ErrNotFound
@@ -56,7 +56,7 @@ func (context MemoryStorageContext) Get(storable Storeable) error {
 	return json.Unmarshal(val, &storable)
 }
 
-func (context MemoryStorageContext) Delete(storable Storeable) error {
+func (context MemoryContext) Delete(storable Storeable) error {
 	type_, ok := context.values[storable.Type()]
 	if !ok {
 		return nil
