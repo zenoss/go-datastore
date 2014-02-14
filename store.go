@@ -53,4 +53,4 @@ func Exists(context Context, s Storeable) (bool, error) {
 	return context.Exists(s)
 }
 
-// exists && search
+// TODO: implement search
